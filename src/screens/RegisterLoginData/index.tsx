@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -30,6 +30,7 @@ const schema = Yup.object().shape({
 })
 
 export function RegisterLoginData() {
+  const navigation = useNavigation();
   const { navigate } = useNavigation();
   const {
     control,
@@ -44,12 +45,32 @@ export function RegisterLoginData() {
   async function handleRegister(formData: FormData) {
     const newLoginData = {
       id: String(uuid.v4()),
+      // service_name: formData.service_name, 
+      // email: formData.email, 
+      // password: formData.password,
       ...formData
     }
-
+    
     const dataKey = '@savepass:logins';
 
     // Save data on AsyncStorage and navigate to 'Home' screen
+    const data = await AsyncStorage.getItem(dataKey);
+    const dataCurrent = data ? JSON.parse(data) : [];
+
+    // const dataNew: FormData=  {      
+    //   service_name: formData.service_name, 
+    //   email: formData.email, 
+    //   password: formData.password
+    // }
+
+    const dataFinal = [
+      ...dataCurrent,
+      newLoginData      
+    ];
+
+    await AsyncStorage.setItem(dataKey, JSON.stringify(dataFinal));
+    console.log(dataFinal);
+    navigation.navigate('Home');
   }
 
   return (
@@ -67,7 +88,8 @@ export function RegisterLoginData() {
             name="service_name"
             error={
               // Replace here with real content
-              'Has error ? show error message'
+              errors.service_name && errors.service_name.message
+              // 'Has error ? show error message'
             }
             control={control}
             autoCapitalize="sentences"
@@ -79,7 +101,8 @@ export function RegisterLoginData() {
             name="email"
             error={
               // Replace here with real content
-              'Has error ? show error message'
+              errors.email && errors.email.message
+              // 'Has error ? show error message'
             }
             control={control}
             autoCorrect={false}
@@ -91,8 +114,9 @@ export function RegisterLoginData() {
             title="Senha"
             name="password"
             error={
-              // Replace here with real content
-              'Has error ? show error message'
+              // Replace here with real content password
+              errors.password && errors.password.message
+              // 'Has error ? show error message'
             }
             control={control}
             secureTextEntry
