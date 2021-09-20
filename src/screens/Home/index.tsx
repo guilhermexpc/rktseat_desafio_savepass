@@ -48,25 +48,15 @@ export function Home() {
 
   function handleFilterLoginData() {
     // Filter results inside data, save with setSearchListData
-    const dataFilter = data.filter((value: LoginDataProps) => {
-      console.log(value.service_name)
+    const dataFilter = data.filter((value: LoginDataProps) => (
       value.service_name == searchText
-    });
-    console.log(`SCH:[${searchText}]`)
-    console.log(`Length:[${dataFilter.length}] - DF:[${dataFilter}]`)
+    ));
+
     if (dataFilter.length > 0){
-      console.log('dataFilter')
       setSearchListData(dataFilter);
     }else{
-      console.log('data')
       setSearchListData(data);
     }
-
-    // if (searchText !== '')
-    //   setSearchListData(data.filter((value: LoginDataProps) => {
-    //     value.service_name === searchText
-    //   }));
-    
   }
 
   function handleChangeInputText(text: string) {
